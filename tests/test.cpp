@@ -30,6 +30,12 @@ TEST(testOperator, arrowTest) {
   EXPECT_EQ(pointer -> a, testClassPointer -> a);
 }
 
+TEST(testOperator, TestAsterisk) {
+  int* points = new int (609);
+  SharedPtr <int> pointer(points);
+  EXPECT_EQ(609, *pointer);
+}
+
 TEST(testMethod, testGet) {
   int* points = nullptr;
   SharedPtr <int> pointer(points);
@@ -105,7 +111,12 @@ TEST(testConstructor,Move){
   int* points = new int (609);
   SharedPtr <int> pointer(points);
   SharedPtr <int> pointer1(move(pointer));
+  SharedPtr <int> pointer3;
+  pointer3 = std::move(pointer);
+  SharedPtr <int> pointer4;
+  pointer4 = pointer3;
   EXPECT_EQ(609, *pointer1.get());
+  EXPECT_FALSE(pointer);
 }
 
 TEST(testIsMove, assignConstTest) {

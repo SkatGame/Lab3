@@ -85,10 +85,7 @@ class SharedPtr {
   }
 
   T& operator*() const {
-    if(pointer)
       return *pointer;
-    else
-      return nullptr;
   }
 
   T* operator->() const{
