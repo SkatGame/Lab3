@@ -13,7 +13,7 @@ using std::atomic_uint;
 template <typename T>
 class SharedPtr {
  public:
- SharedPtr(): pointer(nullptr), counter(new atomic_uint(0)){}
+ SharedPtr(): pointer(nullptr), counter(nullptr){}
 
   explicit SharedPtr(T* newPointer) {
     pointer=newPointer;
