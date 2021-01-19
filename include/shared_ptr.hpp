@@ -9,6 +9,7 @@
 
 using std::move;
 using std::atomic_uint;
+using std::swap;
 
 template <typename T>
 class SharedPtr {
@@ -39,10 +40,8 @@ class SharedPtr {
 
   SharedPtr(SharedPtr&& sharedPtr) noexcept {
     if (sharedPtr.pointer) {
-      sharedPtr.pointer = nullptr;
-      sharedPtr.counter = nullptr;
-      pointer = move(sharedPtr.pointer);
-      counter = move(sharedPtr.counter);
+      swap(pointer, sharedPtr.pointer);
+      swap(counter, sharedPtr.counter);
     }
   };
 
@@ -61,8 +60,8 @@ class SharedPtr {
 
   SharedPtr& operator=(SharedPtr&& sharedPtr) noexcept {
     if (this != &sharedPtr) {
-      pointer = move(sharedPtr.pointer);
-      counter = move(sharedPtr.counter);
+      swap(pointer, sharedPtr.pointer);
+      swap(counter, sharedPtr.counter);
     }
     return *this;
   };

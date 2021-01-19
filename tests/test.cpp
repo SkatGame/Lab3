@@ -23,7 +23,6 @@ TEST(testOperator, boolTrueTest) {
   EXPECT_EQ(isPointer, true);
 }
 
-
 TEST(testOperator, arrowTest) {
   auto testClassPointer = new TestClass;
   testClassPointer -> a = 609;
@@ -99,7 +98,6 @@ TEST(testOperator, useCount){
   int* points = new int (609);
   SharedPtr <int> pointer(points);
   SharedPtr <int> pointer2 = pointer;
-  SharedPtr <int> pointer3(move(pointer2));
   EXPECT_EQ(pointer.use_count(),2);
 }
 
