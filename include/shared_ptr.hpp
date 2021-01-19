@@ -4,19 +4,18 @@
 #define INCLUDE_HEADER_HPP_
 
 #include <iostream>
-#include <atomic> //atomarnie vichislenya
+#include <atomic>
 #include <utility>
 
 using std::move;
 using std::atomic_uint;
 
-template <typename T> //Dlya raboti so vsemi tipami(shablonnii class)
-
+template <typename T>
 class SharedPtr {
  public:
- SharedPtr(): pointer(nullptr), counter(nullptr){}//default constructor
+ SharedPtr(): pointer(nullptr), counter(nullptr){}
 
-  explicit SharedPtr(T* newPointer) { //explicit dlya zapreta neyavnogo privideniya;esh'e odin constructor
+  explicit SharedPtr(T* newPointer) {
     pointer=newPointer;
     if (newPointer == nullptr){
       counter = nullptr;
@@ -26,7 +25,7 @@ class SharedPtr {
     }
   };
 
-  SharedPtr(const SharedPtr& sharedPtr){ // constructor copy
+  SharedPtr(const SharedPtr& sharedPtr){
     if (sharedPtr.pointer){
       pointer = sharedPtr.pointer;
       counter = sharedPtr.counter;
@@ -38,16 +37,16 @@ class SharedPtr {
     }
   };
 
-  SharedPtr(SharedPtr&& sharedPtr) noexcept { //constructor move
-    if (sharedPtr.pointer) {                  //спецификатор времени компиляции noexcept -
-      pointer = sharedPtr.pointer;            //говорит компилятору о том, что функция не будет выбрасывать исключения =>
-      counter = sharedPtr.counter;            //сильно уменьшает размер итогового файла и ускоряет работу программы
+  SharedPtr(SharedPtr&& sharedPtr) noexcept {
+    if (sharedPtr.pointer) {
       sharedPtr.pointer = nullptr;
       sharedPtr.counter = nullptr;
+      pointer = move(sharedPtr.pointer);
+      counter = move(sharedPtr.counter);
     }
   };
 
-  SharedPtr& operator=(const SharedPtr& sharedPtr){ //peregruska oeratora copy(=)
+  SharedPtr& operator=(const SharedPtr& sharedPtr){
     if (this != &sharedPtr) {
       pointer = sharedPtr.pointer;
       counter = sharedPtr.counter;
@@ -60,7 +59,7 @@ class SharedPtr {
     return *this;
   };
 
-  SharedPtr& operator=(SharedPtr&& sharedPtr) noexcept { //peregruska oeratora move(=)
+  SharedPtr& operator=(SharedPtr&& sharedPtr) noexcept {
     if (this != &sharedPtr) {
       pointer = move(sharedPtr.pointer);
       counter = move(sharedPtr.counter);
@@ -68,7 +67,7 @@ class SharedPtr {
     return *this;
   };
 
-  ~SharedPtr(){ //destructor
+  ~SharedPtr(){
     if(counter){
       if(*counter==1) {
         delete pointer;
@@ -81,7 +80,7 @@ class SharedPtr {
     counter = nullptr;
   }
 
-  operator bool() const{ //proverka, ykasivaet li ykazatel' na object
+  operator bool() const{
     if(pointer)
       return true;
     else {
@@ -89,22 +88,22 @@ class SharedPtr {
     }
   }
 
-  T& operator*() const { //peregruska rasiminovaniya dlya SharedPtr
+  T& operator*() const {
     if(pointer)
       return *pointer;
     else
       return nullptr;
   }
 
-  T* operator->() const{  //peregruska obrash'eniya k poly dlya SharedPtr
+  T* operator->() const{
     return pointer;
   }
 
-  T* get() {  // metod get dlya SharedPtr
+  T* get() {
     return pointer;
   }
 
-  void reset() { //obnylenie
+  void reset() {
     if(*counter==1){
       delete pointer;
       delete counter;
@@ -140,8 +139,8 @@ class SharedPtr {
     counter = tmpCounter;
   };
 
-[[nodiscard]] size_t use_count() const{ //vosvrash'aet kol-vo object SharedPtr, na odin object
-  if(counter){                          //[[nodiscard]] - для функций, возвращающих код ошибки или владеющий указатель (неважно, умный или нет)
+[[nodiscard]] size_t use_count() const{
+  if(counter){
     return *counter;
   }else{
     return 0;

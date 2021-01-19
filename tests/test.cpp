@@ -1,7 +1,8 @@
 // Copyright 2020 Your Name <your_email>
 
 #include <gtest/gtest.h>
-#include <header.hpp>
+
+#include <shared_ptr.hpp>
 
 class TestClass {
  public:
@@ -103,8 +104,8 @@ TEST(testOperator, useCount){
 }
 
 TEST(testIsMove, assignConstTest) {
-  EXPECT_EQ(std::is_move_assignable<SharedPtr<int>>::value, true);//proveryaet yavlyatsya li tip prisvaemim pri move
-  EXPECT_EQ(std::is_move_constructible<SharedPtr<int>>::value, true);//proveryaet imeet li tip constructor move
+  EXPECT_EQ(std::is_move_assignable<SharedPtr<int>>::value, true);
+  EXPECT_EQ(std::is_move_constructible<SharedPtr<int>>::value, true);
   EXPECT_EQ(std::is_move_assignable<SharedPtr<double>>::value, true);
   EXPECT_EQ(std::is_move_constructible<SharedPtr<double>>::value,true);
   EXPECT_EQ(std::is_move_assignable<SharedPtr<TestClass>>::value,true);
@@ -112,8 +113,8 @@ TEST(testIsMove, assignConstTest) {
 }
 
 TEST(testIsCopy, assignConstTest) {
-  EXPECT_EQ(std::is_copy_assignable<SharedPtr<int>>::value, true);//proveryaet yavlyatsya li tip prisvaemim pri copy
-  EXPECT_EQ(std::is_copy_constructible<SharedPtr<int>>::value, true);//proveryaet imeet li tip constructor copy
+  EXPECT_EQ(std::is_copy_assignable<SharedPtr<int>>::value, true);
+  EXPECT_EQ(std::is_copy_constructible<SharedPtr<int>>::value, true);
   EXPECT_EQ(std::is_copy_assignable<SharedPtr<double>>::value, true);
   EXPECT_EQ(std::is_copy_constructible<SharedPtr<double>>::value,true);
   EXPECT_EQ(std::is_copy_assignable<SharedPtr<TestClass>>::value,true);
