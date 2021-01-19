@@ -13,7 +13,7 @@ using std::atomic_uint;
 template <typename T>
 class SharedPtr {
  public:
- SharedPtr(): pointer(nullptr), counter(nullptr){}
+ SharedPtr(): pointer(nullptr), counter(new atomic_uint(0)){}
 
   explicit SharedPtr(T* newPointer) {
     pointer=newPointer;
@@ -37,7 +37,9 @@ class SharedPtr {
     }
   };
 
-  SharedPtr(SharedPtr&& sharedPtr) noexcept {
+  SharedPtr(SharedPtr&& sharedPtr) {
+    pointer = nullptr;
+    counter = nullptr;
     if (sharedPtr.pointer) {
       std::swap(pointer, sharedPtr.pointer);
       std::swap(counter, sharedPtr.counter);
@@ -57,7 +59,7 @@ class SharedPtr {
     return *this;
   };
 
-  SharedPtr& operator=(SharedPtr&& sharedPtr) noexcept {
+  SharedPtr& operator=(SharedPtr&& sharedPtr) {
     if (this != &sharedPtr) {
       std::swap(pointer, sharedPtr.pointer);
       std::swap(counter, sharedPtr.counter);
@@ -65,9 +67,12 @@ class SharedPtr {
     return *this;
   };
 
-  ~SharedPtr(){
-    if (!--counter) {
-      pointer = nullptr;
+  ~SharedPtr() {
+    if (counter) {
+      if (!--*counter) {
+        delete pointer;
+        delete counter;
+      }
     }
   }
 
