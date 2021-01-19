@@ -101,6 +101,13 @@ TEST(testOperator, useCount){
   EXPECT_EQ(pointer.use_count(),2);
 }
 
+TEST(testConstructor,Move){
+  int* points = new int (609);
+  SharedPtr <int> pointer(points);
+  SharedPtr <int> pointer1(move(pointer));
+  EXPECT_EQ(609, *pointer1.get());
+}
+
 TEST(testIsMove, assignConstTest) {
   EXPECT_EQ(std::is_move_assignable<SharedPtr<int>>::value, true);
   EXPECT_EQ(std::is_move_constructible<SharedPtr<int>>::value, true);
