@@ -8,63 +8,77 @@ class TestClass {
   int a;
 };
 
-TEST(Example, EmptyTest) {
-    EXPECT_TRUE(true);
-}
-
 TEST(testConstructor, pointNullptr) {
   SharedPtr <int> pointer;
   int* tmp = pointer.get();
   EXPECT_EQ(tmp, nullptr);
 }
 
-TEST(testConstructor, pointIntNullptr) {
-  int *points = new int (22);
-  SharedPtr <int> pointer(points);
-  int* tmp = pointer.get();
-  EXPECT_EQ(tmp, points);
-}
-
-TEST(testConstructor, rvalueTest) {
-  int *points = new int (922);
+TEST(testOperator, boolTrueTest) {
+  int* points = new int (609);
   SharedPtr <int> pointer(points);
   SharedPtr <int> pointer2 = pointer;
-  SharedPtr <int> pointer3(std::move(pointer));
-  EXPECT_EQ(pointer3.use_count(), 2);
+  bool isPointer = pointer2;
+  EXPECT_EQ(isPointer, true);
+}
+
+
+TEST(testOperator, arrowTest) {
+  auto testClassPointer = new TestClass;
+  testClassPointer -> a = 609;
+  SharedPtr <TestClass> pointer(testClassPointer);
+  EXPECT_EQ(pointer -> a, testClassPointer -> a);
 }
 
 TEST(testMethod, testGet) {
-  int *points = nullptr;
+  int* points = nullptr;
   SharedPtr <int> pointer(points);
   int* tmp = pointer.get();
   EXPECT_EQ(tmp, nullptr);
 }
 
 TEST(testMethod, testGetInt) {
-  int *points = new int (827);
+  int* points = new int (609);
   SharedPtr <int> pointer(points);
   SharedPtr <int> pointer2 = pointer;
   EXPECT_EQ(pointer.get(), points);
 }
 
 TEST(testMethod, resetTest) {
-  int  *points = new int (922);
+  int* points = new int (609);
   SharedPtr <int> pointer(points);
   pointer.reset();
   EXPECT_EQ(pointer.get(), nullptr);
 }
 
+TEST(testMethod, resetTestElse){
+  int* points = new int (609);
+  SharedPtr <int> pointer(points);
+  SharedPtr <int> pointer2 = pointer;
+  pointer.reset();
+  EXPECT_EQ(pointer.get(), nullptr);
+}
+
 TEST (testMethod, resetTestPoint) {
-  int *points = new int (922);
-  int *points1 = new int (279);
+  int* points = new int (609);
+  int* points1 = new int (69);
   SharedPtr <int> pointer(points);
   pointer.reset(points1);
   EXPECT_EQ(pointer.get(), points1);
 }
 
+TEST (testMethod, resetTestPointElse) {
+  int* points = new int (609);
+  int* points1 = new int (69);
+  SharedPtr <int> pointer(points);
+  SharedPtr <int> pointer2 = pointer;
+  pointer.reset(points1);
+  EXPECT_EQ(pointer.get(), points1);
+}
+
 TEST(testMethod, swapTest) {
-  int *points = new int (922);
-  int *points1 = new int (279);
+  int* points = new int (609);
+  int* points1 = new int (69);
   SharedPtr <int> pointer(points);
   SharedPtr <int> pointer1(points1);
   pointer.swap(pointer1);
@@ -72,27 +86,20 @@ TEST(testMethod, swapTest) {
   EXPECT_EQ(pointer1.get(), points);
 }
 
-TEST(testOperator, boolTest) {
-  int *points = new int (227);
+TEST(testOperator, equalityLvalueTest) {
+  int* points = new int (609);
   SharedPtr <int> pointer(points);
   SharedPtr <int> pointer2 = pointer;
-  bool is_pointer = pointer2;
-  EXPECT_EQ(is_pointer, true);
-}
-
-TEST(testOperator, arrowTest) {
-  auto testClassPointer = new TestClass;
-  testClassPointer-> a = 922;
-  SharedPtr <TestClass> pointer(testClassPointer);
-  EXPECT_EQ(pointer-> a, testClassPointer->a);
-}
-
-TEST(testOperator, equalityLvalueTest) {
-  int *points = new int (922);
-  SharedPtr <int> pointer(points);
-  SharedPtr <int> pointer2;
-  SharedPtr <int> pointer3 = pointer2 = pointer;
+  SharedPtr <int> pointer3 = pointer2;
   EXPECT_EQ(pointer3.get(), pointer.get());
+}
+
+TEST(testOperator, useCount){
+  int* points = new int (609);
+  SharedPtr <int> pointer(points);
+  SharedPtr <int> pointer2 = pointer;
+  SharedPtr <int> pointer3(move(pointer2));
+  EXPECT_EQ(pointer.use_count(),2);
 }
 
 TEST(testIsMove, assignConstTest) {

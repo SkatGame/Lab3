@@ -14,7 +14,7 @@ template <typename T> //Dlya raboti so vsemi tipami(shablonnii class)
 
 class SharedPtr {
  public:
-  SharedPtr(): pointer(nullptr), counter(0){}//default constructor
+ SharedPtr(): pointer(nullptr), counter(nullptr){}//default constructor
 
   explicit SharedPtr(T* newPointer) { //explicit dlya zapreta neyavnogo privideniya;esh'e odin constructor
     pointer=newPointer;
@@ -38,6 +38,15 @@ class SharedPtr {
     }
   };
 
+  SharedPtr(SharedPtr&& sharedPtr) noexcept { //constructor move
+    if (sharedPtr.pointer) {                  //спецификатор времени компиляции noexcept -
+      pointer = sharedPtr.pointer;            //говорит компилятору о том, что функция не будет выбрасывать исключения =>
+      counter = sharedPtr.counter;            //сильно уменьшает размер итогового файла и ускоряет работу программы
+      sharedPtr.pointer = nullptr;
+      sharedPtr.counter = nullptr;
+    }
+  };
+
   SharedPtr& operator=(const SharedPtr& sharedPtr){ //peregruska oeratora copy(=)
     if (this != &sharedPtr) {
       pointer = sharedPtr.pointer;
@@ -51,15 +60,7 @@ class SharedPtr {
     return *this;
   };
 
-  SharedPtr(SharedPtr&& sharedPtr){ //constructor move
-    if (sharedPtr.pointer) {
-      pointer = sharedPtr.pointer;
-      counter = sharedPtr.counter;
-      sharedPtr.pointer = nullptr;
-      sharedPtr.counter = nullptr;
-    }
-  };
-  SharedPtr& operator=(SharedPtr&& sharedPtr){ //peregruska oeratora move(=)
+  SharedPtr& operator=(SharedPtr&& sharedPtr) noexcept { //peregruska oeratora move(=)
     if (this != &sharedPtr) {
       pointer = move(sharedPtr.pointer);
       counter = move(sharedPtr.counter);
@@ -83,8 +84,9 @@ class SharedPtr {
   operator bool() const{ //proverka, ykasivaet li ykazatel' na object
     if(pointer)
       return true;
-    else
+    else {
       return false;
+    }
   }
 
   T& operator*() const { //peregruska rasiminovaniya dlya SharedPtr
@@ -130,9 +132,6 @@ class SharedPtr {
   };
 
   void swap(SharedPtr& sharedPtr){
-//    T* tmpPointer(move(sharedPtr.pointer));
-//    sharedPtr.pointer = move(pointer);             КОД!!!!!!
-//    pointer=move(tmpPointer);
     T* tmpPointer = sharedPtr.pointer;
     sharedPtr.pointer = pointer;
     pointer = tmpPointer;
@@ -141,8 +140,8 @@ class SharedPtr {
     counter = tmpCounter;
   };
 
-size_t use_count() const{ //vosvrash'aet kol-vo object SharedPtr, na odin object
-  if(counter){
+[[nodiscard]] size_t use_count() const{ //vosvrash'aet kol-vo object SharedPtr, na odin object
+  if(counter){                          //[[nodiscard]] - для функций, возвращающих код ошибки или владеющий указатель (неважно, умный или нет)
     return *counter;
   }else{
     return 0;
