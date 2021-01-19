@@ -40,10 +40,8 @@ class SharedPtr {
 
   SharedPtr(SharedPtr&& sharedPtr) noexcept { //constructor move
     if (sharedPtr.pointer) {                  //спецификатор времени компиляции noexcept -
-      pointer = sharedPtr.pointer;            //говорит компилятору о том, что функция не будет выбрасывать исключения =>
-      counter = sharedPtr.counter;            //сильно уменьшает размер итогового файла и ускоряет работу программы
-      sharedPtr.pointer = nullptr;
-      sharedPtr.counter = nullptr;
+      pointer = move(sharedPtr.pointer);      //говорит компилятору о том, что функция не будет выбрасывать исключения =>
+      counter = move(sharedPtr.counter);      //сильно уменьшает размер итогового файла и ускоряет работу программы
     }
   };
 
